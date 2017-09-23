@@ -19,4 +19,4 @@
 
 ##### myCard.js
 
-Currently all of the files above are filled with placeholder data.
+Currently all of the files above are filled with placeholder data. These files are excluded by the .gitignore so as long as you leave them with the same filenames, your data *should* not be added in with your commit. Please verify that for yourself before committing if you fork this repo.
