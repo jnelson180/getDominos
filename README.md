@@ -11,12 +11,30 @@
 #### I assume no responsibility and/or liability for your willing use of this tool.
 
 
-### In order to use this yourself, you will need to edit a few files in your project directory (where index.js is):
+### In order to use this yourself, you will need to create a few files in your project directory (where index.js is):
 
 ##### myAddress.js
+module.exports = {
+	Street: 'Your address',
+	City: 'City',
+	Region: 'Two Letter State Code',
+	PostalCode: '44444'
+}
 
 ##### myDetails.js
+var homeAddress = require('./myAddress');
+module.exports = {
+	address: homeAddress,
+	firstName: 'First',
+	lastName: 'Name',
+	phone: '123-456-7890',
+	email: 'email@email.com'
+}
 
 ##### myCard.js
-
-Currently all of the files above are filled with placeholder data. These files are excluded by the .gitignore so as long as you leave them with the same filenames, your data *should* not be added in with your commit. Please verify that for yourself before committing if you fork this repo.
+module.exports = {
+	cardNumber: '1111111111111111',
+	expiration: '2222',
+	securityCode: '333',
+	postalCode: '44444'
+}
