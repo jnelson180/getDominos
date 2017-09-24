@@ -1,0 +1,58 @@
+pizza crusts
+10THIN - cyo thin crust
+12THIN
+14THIN
+
+10SCREEN - cyo hand tossed
+12SCREEN
+14SCREEN
+
+P12IPAZA - 12" pan
+
+PBKIREZA - 14" brooklyn
+P16IBKZA - 16" brooklyn
+
+P10IGFZA - 10" gluten free
+
+Options (toppings)
+// eg.    C: {1/1: "1"}   would mean whole pizza w/cheese
+// * should probably be a default
+
+meats
+B - beef
+C - cheese  *
+Du - chicken    
+H - ham
+K - bacon
+P - pepperoni
+Pm - philly steak
+S - italian sausage
+Sa - salami
+
+sauces
+X: original / robust inspired tomato sauce *
+Xm: hearty marinara
+Bq: bbq sauce
+Xw: garlic parmesan white sauce
+Xf: alfredo sauce
+
+veggies/etc
+E: cheddar cheese
+Cs: shredded parmesan asiago
+Z: banana peppers
+V: green olives
+J: jalapeno
+N: pineapple
+Rr: roasted red peppers
+Td: diced tomatoes
+Fe: feta cheese
+Cp: provolone
+R: black olives
+G: green peppers
+M: mushrooms
+O: onions
+Si: spinach
+Ht: hot sauce
+
+Order.Coupons format: Coupons
+[{Code: "5152", Qty: 1, ID: 3}]

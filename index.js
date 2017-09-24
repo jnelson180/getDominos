@@ -67,6 +67,9 @@ const coke = new pizzapi.Item({
 prompt.start();
 
 var myStoreData;
+var availableCouponCodes = []; // four digit codes, strings
+var selectedCouponCodes = [];
+
 console.log(warn('What is your zip code?'));
 prompt.get(['zipCode'], function (err, result) {
 
@@ -76,7 +79,7 @@ prompt.get(['zipCode'], function (err, result) {
         function (storeData) {
             myStoreData = storeData.result.Stores[0];
             myStoreNumber = myStoreData.StoreID;
-            // console.log(myStoreData);
+            console.log(myStoreData);
             var myStoreInfo = {
                 storeNumber: myStoreNumber,
                 address: myStoreData.AddressDescription.split('\n').slice(0, 2).join(", "),
@@ -93,17 +96,50 @@ prompt.get(['zipCode'], function (err, result) {
                 console.log("Looks like you can't place an order right now. Lucky you!");
                 return;
             } else {
-                myStore.getFriendlyNames(
-                    function (menuData) {
-                        // if storeData.success...
-                        // console.log(menuData);
-                        // for (var item in menuData.result) {
-                        // console.log(menuData.result[item][Object.keys(menuData.result[item])].Name,
-                        // menuData.result[item][Object.keys(menuData.result[item])].Code);
-                        // }
+                myStore.getMenu(
+                    function(menu) {
+                        if (menu.result.Coupons) {
+                            var coupons = menu.result.Coupons;
+                            console.log(funky('Delivery Deals of the Day:\n'));
+                            // console.log(coupons);
+
+                            for (var item in coupons) {
+                                if (coupons[item].Name.indexOf('Carryout') === -1) {
+                                    availableCouponCodes.push(coupons[item].Code);
+                                    console.log(info(
+                                        coupons[item].Code, ":",
+                                        coupons[item].Price,
+                                        coupons[item].Name, "\n"
+                                    ));
+                                }
+                            }
+
+                            // ask if user wants to apply a coupon
+                            console.log(warn('Would you like to add a coupon code?'));
+                            prompt.get(['couponCode'], function (err, result) {
+                                if (availableCouponCodes.indexOf(String(result.couponCode)) > -1) {
+                                    selectedCouponCodes.push(String(result.couponCode));
+                                    console.log('Coupon code', result.couponCode, "added.\n");
+                                } else if (result.couponCode !== "n" && result.couponCode !== "no") {
+                                    console.log(error('\nInvalid coupon code entered. Please continue with your order.'));
+                                }
+
+                                myStore.getFriendlyNames(
+                                    function (menuData) {
+                                        if (menuData.success) {
+                                            // console.log(menuData);
+                                            for (var item in menuData.result) {
+                                            // console.log(menuData.result[item][Object.keys(menuData.result[item])].Name,
+                                            // menuData.result[item][Object.keys(menuData.result[item])].Code);
+                                            }
+                                        }
+                                    }
+                                );
+                                startOrder();                                
+                            });
+                        }
                     }
                 );
-                startOrder();
             }
         }
     );
