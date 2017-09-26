@@ -69,6 +69,7 @@ prompt.start();
 var myStoreData;
 var availableCouponCodes = []; // four digit codes, strings
 var selectedCouponCodes = [];
+var order;
 
 console.log(warn('What is your zip code?'));
 prompt.get(['zipCode'], function (err, result) {
@@ -96,8 +97,14 @@ prompt.get(['zipCode'], function (err, result) {
                 console.log("Looks like you can't place an order right now. Lucky you!");
                 return;
             } else {
+                order = new pizzapi.Order({
+                    customer: myDetails,
+                    storeId: myStore.ID,
+                    deliveryMethod: 'Delivery',
+                    currency: 'USD',
+                });
                 myStore.getMenu(
-                    function(menu) {
+                    function (menu) {
                         if (menu.result.Coupons) {
                             var coupons = menu.result.Coupons;
                             console.log(funky('Delivery Deals of the Day:\n'));
@@ -118,7 +125,7 @@ prompt.get(['zipCode'], function (err, result) {
                             console.log(warn('Would you like to add a coupon code?'));
                             prompt.get(['couponCode'], function (err, result) {
                                 if (availableCouponCodes.indexOf(String(result.couponCode)) > -1) {
-                                    selectedCouponCodes.push(String(result.couponCode));
+                                    selectedCouponCodes.push({ "Code": result.couponCode, "Qty": 1 });
                                     console.log('Coupon code', result.couponCode, "added.\n");
                                 } else if (result.couponCode !== "n" && result.couponCode !== "no") {
                                     console.log(error('\nInvalid coupon code entered. Please continue with your order.'));
@@ -129,13 +136,13 @@ prompt.get(['zipCode'], function (err, result) {
                                         if (menuData.success) {
                                             // console.log(menuData);
                                             for (var item in menuData.result) {
-                                            // console.log(menuData.result[item][Object.keys(menuData.result[item])].Name,
-                                            // menuData.result[item][Object.keys(menuData.result[item])].Code);
+                                                // console.log(menuData.result[item][Object.keys(menuData.result[item])].Name,
+                                                // menuData.result[item][Object.keys(menuData.result[item])].Code);
                                             }
                                         }
                                     }
                                 );
-                                startOrder();                                
+                                startOrder();
                             });
                         }
                     }
@@ -145,26 +152,82 @@ prompt.get(['zipCode'], function (err, result) {
     );
 });
 
-function startOrder() {
-    var order = new pizzapi.Order({
-        customer: myDetails,
-        storeId: myStore.ID,
-        deliveryMethod: 'Delivery',
-        currency: 'USD'
+function pizzaFactory() {
+    var schema = {
+        description: warn('What topping(s) would you like? (enter codes only, spaces separating) \n' +
+            '\nB - Beef \nDu - Chicken \nH - Ham \nK - Bacon \n P - Pepperoni \n' +
+            'Pm - Philly cheese steak\n S - Italian Sausage \nSa - Salami\n' +
+            'E - Cheddar Cheese \nCs - Parmesan Asiago \nZ - Banana Peppers \n' +
+            'V - Green Olives \nJ - Jalapenos \nN - Pineapple (a terrible idea) \n' +
+            'Rr - Roasted Red Peppers \nTd - Diced Tomatoes \nFe - Feta Cheese \n' +
+            'Cp - Provolone \nR - Black Olives \nG - Green Peppers \nM - Mushrooms \n' +
+            'O - Onions \nSi - Spinach \nHt - Hot Sauce\n\n'),
+        type: 'string',
+        // pattern: /[1-9]{1-9}/,
+        message: colors.red.underline('You must choose options to order.'),
+        hidden: false,
+        required: true
+    }
+
+    var toppings = [];
+    var possibleToppings = ["B", "C", "Du", "H", "K", "P", "Pm", "S", "Sa", "Si", "Ht",
+        "E", "Cs", "Z", "V", "J", "N", "Rr", "Td", "Fe", "Cp", "R", "G", "M", "O"]
+
+    prompt.get(schema, function (err, res) {
+        // res = { question: value }
+        var opt = res.question.toString();
+        // console.log(opt, typeof(opt));
+        var options = opt.split(' ');
+        options.forEach((o) => {
+            if (possibleToppings.indexOf(o) > -1) {
+                toppings.push(o);
+            }
+        });
+
+        console.log('Topping codes:', toppings);
+        makePizza("14THIN", toppings);
     });
+}
+
+function makePizza(code, options) {
+    // var pizza = new pizzapi.Item({});
+    var pizza = {};
+    
+    pizza.Code = code;
+    pizza.Options = {
+        C: { "1/1": "1" },
+        X: { "1/1": "1" }
+    };
+    pizza.Qty = 1;
+
+    options.forEach((o) => {
+        pizza.Options[o] = { "1/1": "1" };
+    });
+
+    console.log(pizza);
+    // order.addItem(pizza);
+    order.Products.push(pizza);
+    validateOrder(order);
+}
+
+function startOrder() {
+    order.Coupons = selectedCouponCodes;
 
     promptForOrder();
 
     function promptForOrder() {
         var schema = {
             description: warn('What option(s) would you like? (enter numbers only, multiple OK) \n' +
-                '\n1: WI Six Cheese pizza \n2: Pacific Veggie Pizza \n3: 8 hot wings \n4: Coke\n\n'),
+                '\n1: WI Six Cheese pizza \n2: Pacific Veggie Pizza \n3: 8 hot wings \n4: Coke\n' +
+                '5: Make your own pizza\n\n'),
             type: 'number',
             pattern: /[1-9]{1-9}/,
             message: colors.red.underline('You must choose options to order.'),
             hidden: false,
             required: true
         }
+
+        var creatingPizzaFlag = false;
 
         prompt.get(schema, function (err, res) {
             // res = { question: value }
@@ -185,17 +248,28 @@ function startOrder() {
                     case "4":
                         order.addItem(coke);
                         break;
+                    case "5":
+                        creatingPizzaFlag = true;
+                        order.addItem(pizzaFactory());
+                        break;
                     default:
                         return;
                 }
             });
-            order.addItem(gButter);
+            // order.addItem(gButter);
             // console.log('order before validate:');
-            order.Currency = "USD";
-            order.StoreID = myStore.ID;
+            if (!order.Currency) {
+                order.Currency = "USD";
+            }
 
-            console.log(order);
-            validateOrder(order);
+            if (!order.StoreID) {
+                order.StoreID = myStore.ID;
+            }
+
+            // console.log(order);
+            if (!creatingPizzaFlag) {
+                validateOrder(order);
+            }
         });
     }
 }
@@ -204,6 +278,7 @@ function validateOrder(order) {
     order.validate(function (result) {
         if (result.success) {
             console.log(success('Order validated.'));
+            console.log(order);
             priceOrder(order);
         } else {
             console.log(error("There was a problem with your order! Aborting!"));
