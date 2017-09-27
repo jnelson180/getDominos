@@ -154,7 +154,8 @@ prompt.get(['zipCode'], function (err, result) {
 
 function pizzaFactory() {
     var crust = null;
-    
+    var sauce = null;
+
     var crustSchema = {
         description: warn('What topping(s) would you like? (enter codes only, spaces separating) \n' +
             '\n0 - 10" Thin Crust \n1 - 12" Thin Crust \n2 - 14" Thin Crust' +
@@ -168,7 +169,6 @@ function pizzaFactory() {
         required: true
     }
 
-    var crust = null;
     var possibleCrust = ["10THIN", "12THIN", "14THIN", "10SCREEN", "12SCREEN", "14SCREEN",
         "P12IPAZA", "PBKIREZA", "P16IBKZA", "P10IGFZA"];
 
@@ -176,9 +176,32 @@ function pizzaFactory() {
         // res = { question: value }
         crust = possibleCrust[Number(res.question)];
 
-        console.log('Crust:', crust);
-        getToppings();
+        console.log('Crust:', crust + '\n');
+        getSauce();
     });
+
+    function getSauce() {
+        var sauceSchema = {
+            description: warn('What sauce would you like? (enter code only) \n' +
+                '\n0 - Original / Robust Inspired Tomato Sauce \n1 - Hearty Marinara ' +
+                '\n2 - Barbeque Sauce \n3 - Garlic Parmesan White Sauce \n4 - Alfredo Sauce\n\n'),
+            type: 'number',
+            pattern: /[0-9]{0-9}/,
+            message: colors.red.underline('You must choose a sauce to order.'),
+            hidden: false,
+            required: true
+        }
+
+        var possibleSauce = ["X", "Xm", "Bq", "Xw", "Xf"];
+
+        prompt.get(sauceSchema, function (err, res) {
+            // res = { question: value }
+            sauce = possibleSauce[Number(res.question)];
+
+            console.log('Sauce:', sauce + '\n');        
+            getToppings();
+        });
+    }
 
     function getToppings() {
         var toppingsSchema = {
@@ -212,28 +235,31 @@ function pizzaFactory() {
                 }
             });
 
-            console.log('Topping codes:', toppings);
-            makePizza(crust, toppings);
+            console.log('Topping codes:', toppings + '\n');
+            makePizza(crust, sauce, toppings);
         });
     }
 }
 
-function makePizza(code, options) {
+function makePizza(code, sauce, toppings) {
     // var pizza = new pizzapi.Item({});
     var pizza = {};
     
     pizza.Code = code;
     pizza.Options = {
-        C: { "1/1": "1" },
-        X: { "1/1": "1" }
+        C: { "1/1": "1" }
     };
     pizza.Qty = 1;
 
-    options.forEach((o) => {
+    toppings.forEach((o) => {
         pizza.Options[o] = { "1/1": "1" };
     });
 
-    console.log(pizza);
+    sauce.forEach((o) => {
+        pizza.Options[o] = { "1/1": "1"};
+    })
+
+    console.log(pizza.Options);
     // order.addItem(pizza);
     order.Products.push(pizza);
     validateOrder(order);
