@@ -255,9 +255,8 @@ function makePizza(code, sauce, toppings) {
         pizza.Options[o] = { "1/1": "1" };
     });
 
-    sauce.forEach((o) => {
-        pizza.Options[o] = { "1/1": "1"};
-    })
+    pizza.Options[sauce] = { "1/1": "1"};
+
 
     console.log(pizza.Options);
     // order.addItem(pizza);
