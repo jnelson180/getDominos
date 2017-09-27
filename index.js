@@ -94,7 +94,7 @@ prompt.get(['zipCode'], function (err, result) {
             myStore = new pizzapi.Store({ ID: myStoreNumber });
 
             if (!myStoreData.IsOpen || !myStoreData.IsOnlineNow) {
-                console.log("Looks like you can't place an order right now. Lucky you!");
+                console.log(error("Looks like you can't place an order right now. Lucky you!\n\n"));
                 return;
             } else {
                 order = new pizzapi.Order({
@@ -153,40 +153,69 @@ prompt.get(['zipCode'], function (err, result) {
 });
 
 function pizzaFactory() {
-    var schema = {
+    var crust = null;
+    
+    var crustSchema = {
         description: warn('What topping(s) would you like? (enter codes only, spaces separating) \n' +
-            '\nB - Beef \nDu - Chicken \nH - Ham \nK - Bacon \n P - Pepperoni \n' +
-            'Pm - Philly cheese steak\n S - Italian Sausage \nSa - Salami\n' +
-            'E - Cheddar Cheese \nCs - Parmesan Asiago \nZ - Banana Peppers \n' +
-            'V - Green Olives \nJ - Jalapenos \nN - Pineapple (a terrible idea) \n' +
-            'Rr - Roasted Red Peppers \nTd - Diced Tomatoes \nFe - Feta Cheese \n' +
-            'Cp - Provolone \nR - Black Olives \nG - Green Peppers \nM - Mushrooms \n' +
-            'O - Onions \nSi - Spinach \nHt - Hot Sauce\n\n'),
-        type: 'string',
-        // pattern: /[1-9]{1-9}/,
-        message: colors.red.underline('You must choose options to order.'),
+            '\n0 - 10" Thin Crust \n1 - 12" Thin Crust \n2 - 14" Thin Crust' +
+            '\n3 - 10" Hand Tossed \n4 - 12" Hand Tossed \n5 - 14" Hand Tossed' +
+            '\n6 - 12" Pan Pizza \n7 - 14" Brooklyn Style Pizza' +
+            '\n8 - 16" Brooklyn Style Pizza \n9 - 10" Gluten Free\n\n'),
+        type: 'number',
+        pattern: /[0-9]{0-9}/,
+        message: colors.red.underline('You must choose a crust to order.'),
         hidden: false,
         required: true
     }
 
-    var toppings = [];
-    var possibleToppings = ["B", "C", "Du", "H", "K", "P", "Pm", "S", "Sa", "Si", "Ht",
-        "E", "Cs", "Z", "V", "J", "N", "Rr", "Td", "Fe", "Cp", "R", "G", "M", "O"]
+    var crust = null;
+    var possibleCrust = ["10THIN", "12THIN", "14THIN", "10SCREEN", "12SCREEN", "14SCREEN",
+        "P12IPAZA", "PBKIREZA", "P16IBKZA", "P10IGFZA"];
 
-    prompt.get(schema, function (err, res) {
+    prompt.get(crustSchema, function (err, res) {
         // res = { question: value }
-        var opt = res.question.toString();
-        // console.log(opt, typeof(opt));
-        var options = opt.split(' ');
-        options.forEach((o) => {
-            if (possibleToppings.indexOf(o) > -1) {
-                toppings.push(o);
-            }
-        });
+        crust = possibleCrust[Number(res.question)];
 
-        console.log('Topping codes:', toppings);
-        makePizza("14THIN", toppings);
+        console.log('Crust:', crust);
+        getToppings();
     });
+
+    function getToppings() {
+        var toppingsSchema = {
+            description: warn('What topping(s) would you like? (enter codes only, spaces separating) \n' +
+                '\nB - Beef \nDu - Chicken \nH - Ham \nK - Bacon \n P - Pepperoni \n' +
+                'Pm - Philly cheese steak\n S - Italian Sausage \nSa - Salami\n' +
+                'E - Cheddar Cheese \nCs - Parmesan Asiago \nZ - Banana Peppers \n' +
+                'V - Green Olives \nJ - Jalapenos \nN - Pineapple (a terrible idea) \n' +
+                'Rr - Roasted Red Peppers \nTd - Diced Tomatoes \nFe - Feta Cheese \n' +
+                'Cp - Provolone \nR - Black Olives \nG - Green Peppers \nM - Mushrooms \n' +
+                'O - Onions \nSi - Spinach \nHt - Hot Sauce\n\n'),
+            type: 'string',
+            // pattern: /[1-9]{1-9}/,
+            message: colors.red.underline('You must choose options to order.'),
+            hidden: false,
+            required: true
+        }
+
+        var toppings = [];
+        var possibleToppings = ["B", "C", "Du", "H", "K", "P", "Pm", "S", "Sa", "Si", "Ht",
+            "E", "Cs", "Z", "V", "J", "N", "Rr", "Td", "Fe", "Cp", "R", "G", "M", "O"]
+
+        prompt.get(toppingsSchema, function (err, res) {
+            // res = { question: value }
+            var opt = res.question.toString();
+            // console.log(opt, typeof(opt));
+            var options = opt.split(' ');
+            options.forEach((o) => {
+                if (possibleToppings.indexOf(o) > -1) {
+                    toppings.push(o);
+                }
+            });
+
+            console.log('Topping codes:', toppings);
+            makePizza(crust, toppings);
+        });
+    }
 }
 
 function makePizza(code, options) {
