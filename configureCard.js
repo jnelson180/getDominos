@@ -3,7 +3,7 @@ var fs = require('fs');
 var prompt = require('prompt');
 prompt.start();
 
-module.exports = function(resolve) {
+module.exports = function (resolve) {
     var card = {
         cardNumber: "",
         expiration: "",
@@ -40,12 +40,12 @@ module.exports = function(resolve) {
     }
 
     function writeFile() {
-        fs.writeFile("./myCard.js", ("module.exports = " + JSON.stringify(card)), function(err) {
-            if(err) {
+        fs.writeFile("./myCard.js", ("module.exports = " + JSON.stringify(card)), function (err) {
+            if (err) {
                 return console.log(err);
             }
             console.log("Details file saved to './myCard.js'!\n\n");
-        }); 
+        });
     }
 
     getCardNumber();

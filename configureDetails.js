@@ -3,7 +3,7 @@ var fs = require('fs');
 var prompt = require('prompt');
 prompt.start();
 
-module.exports = function(address, resolve) {
+module.exports = function (address, resolve) {
     var details = {
         address: address,
         firstName: "",
@@ -41,13 +41,13 @@ module.exports = function(address, resolve) {
     }
 
     function writeFile() {
-        fs.writeFile("./myDetails.js", ("module.exports = " + JSON.stringify(details)), function(err) {
-            if(err) {
+        fs.writeFile("./myDetails.js", ("module.exports = " + JSON.stringify(details)), function (err) {
+            if (err) {
                 return console.log(err);
             }
             console.log("Details file saved to './myDetails.js'!\n\n");
             resolve();
-        }); 
+        });
     }
 
     getFirstName();

@@ -3,7 +3,7 @@ var fs = require('fs');
 var prompt = require('prompt');
 prompt.start();
 
-module.exports = function(resolve) {
+module.exports = function (resolve) {
     var address = {
         Street: "",
         City: "",
@@ -34,19 +34,19 @@ module.exports = function(resolve) {
 
     function getPostal() {
         prompt.get(['What is your zip code?'], function (err, result) {
-            address.PostalCode = Number(Object.values(result)[0]);
+            address.PostalCode = String(Object.values(result)[0]);
             writeFile();
         });
     }
 
     function writeFile() {
-        fs.writeFile("./myAddress.js", ("module.exports = " + JSON.stringify(address)), function(err) {
-            if(err) {
+        fs.writeFile("./myAddress.js", ("module.exports = " + JSON.stringify(address)), function (err) {
+            if (err) {
                 return console.log(err);
             }
             console.log("Address file saved to './myAddress.js'! \n\n");
             resolve(address);
-        }); 
+        });
     }
 
     getStreet();

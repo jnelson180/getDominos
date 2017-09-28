@@ -18,9 +18,7 @@ var error = colors.error;
 var myStore;
 const homeAddress = new pizzapi.Address(myAddress);
 
-// console.log(homeAddress);
-// console.log(myCard);
-// console.log(myDetails);
+console.log(funky('Hi ' + myDetails.firstName + "! Welcome to the unofficial Dominos terminal script!"));
 
 const myInfo = new pizzapi.Customer(myDetails);
 
@@ -68,17 +66,13 @@ var selectedCouponCodes = [];
 var order;
 
 module.exports = {
-    createOrder: function() {
-        console.log(warn('What is your zip code?'));
-        prompt.get(['zipCode'], function (err, result) {
-
-            var myStoreNumber;
-
-            pizzapi.Util.findNearbyStores(result.zipCode, 'Delivery',
+    createOrder: function () {
+        var myStoreNumber;
+        function getStoreInfo() {
+            pizzapi.Util.findNearbyStores(myAddress.PostalCode, 'Delivery',
                 function (storeData) {
                     myStoreData = storeData.result.Stores[0];
                     myStoreNumber = myStoreData.StoreID;
-                    console.log(myStoreData);
                     var myStoreInfo = {
                         storeNumber: myStoreNumber,
                         address: myStoreData.AddressDescription.split('\n').slice(0, 2).join(", "),
@@ -90,7 +84,6 @@ module.exports = {
                     }
                     console.log(info("\nSelected store is: \n"), myStoreInfo, info("\n"));
                     myStore = new pizzapi.Store({ ID: myStoreNumber });
-
                     if (!myStoreData.IsOpen || !myStoreData.IsOnlineNow) {
                         console.log(error("Looks like you can't place an order right now. Lucky you!\n\n"));
                         return;
@@ -148,7 +141,7 @@ module.exports = {
                     }
                 }
             );
-        });
+        }
 
         function pizzaFactory() {
             var crust = null;
@@ -196,7 +189,7 @@ module.exports = {
                     // res = { question: value }
                     sauce = possibleSauce[Number(res.question)];
 
-                    console.log('Sauce:', sauce + '\n');        
+                    console.log('Sauce:', sauce + '\n');
                     getToppings();
                 });
             }
@@ -242,7 +235,7 @@ module.exports = {
         function makePizza(code, sauce, toppings) {
             // var pizza = new pizzapi.Item({});
             var pizza = {};
-            
+
             pizza.Code = code;
             pizza.Options = {
                 C: { "1/1": "1" }
@@ -253,7 +246,7 @@ module.exports = {
                 pizza.Options[o] = { "1/1": "1" };
             });
 
-            pizza.Options[sauce] = { "1/1": "1"};
+            pizza.Options[sauce] = { "1/1": "1" };
 
 
             console.log(pizza.Options);
@@ -402,5 +395,7 @@ module.exports = {
                 }
             );
         }
+        
+        getStoreInfo();
     }
 }
