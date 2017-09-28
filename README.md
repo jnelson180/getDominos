@@ -12,6 +12,7 @@
 
 
 ### In order to use this yourself, you will need to create a few files in your project directory (where index.js is):
+###### OR you can run "npm config" in your terminal and it will walk you through the data entry and create these files for you.
 
 ##### myAddress.js
 module.exports = {
