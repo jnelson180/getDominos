@@ -10,5 +10,4 @@ console.log(api === "pizzapi" ? "Running development api (no transactions)... \n
     colors.red("Running production api (transactions enabled) \n"));
 var pizzapi = require(api); // or with payment option use require('dominos');
 
-
 createOrder();

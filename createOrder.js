@@ -1,27 +1,34 @@
-var prompt = require('prompt');
-var colors = require('./colors');
-var myCard = require('./myCard');
-var myAddress = require('./myAddress');
-var myDetails = require('./myDetails');
-var api = "pizzapi"; // set api version either 'dominos' (real) or 'pizzapi (dev)
+const api = "pizzapi"; // set api version either 'dominos' (real) or 'pizzapi (dev)
+const myAddress = require('./myAddress');
+const myDetails = require('./myDetails');
+const colors = require('./colors');
+const myCard = require('./myCard');
+const prompt = require('prompt');
+const pizzapi = require(api);
+
+const homeAddress = new pizzapi.Address(myAddress);
+const myInfo = new pizzapi.Customer(myDetails);
+const success = colors.success;
+const funky = colors.funky;
+const error = colors.error;
+const warn = colors.warn;
+const info = colors.info;
+const ask = colors.ask;
+
+let availableCouponCodes = []; // four digit codes, strings
+let selectedCouponCodes = [];
+let myStoreData;
+let myStore;
+let order;
+
+// welcome user to app
 console.log(api === "pizzapi" ? "Running development api (no transactions)... \n" :
     colors.error("Running production api (transactions enabled) \n"));
-var pizzapi = require(api); // or with payment option use require('dominos');
-
-var warn = colors.warn;
-var info = colors.info;
-var funky = colors.funky;
-var ask = colors.ask;
-var success = colors.success;
-var error = colors.error;
-
-var myStore;
-const homeAddress = new pizzapi.Address(myAddress);
 
 console.log(funky('Hi ' + myDetails.firstName + "! Welcome to the unofficial Dominos terminal script!"));
 
-const myInfo = new pizzapi.Customer(myDetails);
 
+// preconfigured orders/items
 const veg = new pizzapi.Item({
     code: 'P14ITHPV',
     options: [],
@@ -60,20 +67,15 @@ const coke = new pizzapi.Item({
 
 prompt.start();
 
-var myStoreData;
-var availableCouponCodes = []; // four digit codes, strings
-var selectedCouponCodes = [];
-var order;
-
 module.exports = {
     createOrder: function () {
-        var myStoreNumber;
+        let myStoreNumber;
         function getStoreInfo() {
             pizzapi.Util.findNearbyStores(myAddress.PostalCode, 'Delivery',
                 function (storeData) {
                     myStoreData = storeData.result.Stores[0];
                     myStoreNumber = myStoreData.StoreID;
-                    var myStoreInfo = {
+                    let myStoreInfo = {
                         storeNumber: myStoreNumber,
                         address: myStoreData.AddressDescription.split('\n').slice(0, 2).join(", "),
                         phone: myStoreData.Phone,
@@ -97,7 +99,7 @@ module.exports = {
                         myStore.getMenu(
                             function (menu) {
                                 if (menu.result.Coupons) {
-                                    var coupons = menu.result.Coupons;
+                                    const coupons = menu.result.Coupons;
                                     console.log(funky('Delivery Deals of the Day:\n'));
                                     // console.log(coupons);
 
@@ -144,10 +146,10 @@ module.exports = {
         }
 
         function pizzaFactory() {
-            var crust = null;
-            var sauce = null;
+            let crust = null;
+            let sauce = null;
 
-            var crustSchema = {
+            const crustSchema = {
                 description: warn('What topping(s) would you like? (enter codes only, spaces separating) \n' +
                     '\n0 - 10" Thin Crust \n1 - 12" Thin Crust \n2 - 14" Thin Crust' +
                     '\n3 - 10" Hand Tossed \n4 - 12" Hand Tossed \n5 - 14" Hand Tossed' +
@@ -160,19 +162,17 @@ module.exports = {
                 required: true
             }
 
-            var possibleCrust = ["10THIN", "12THIN", "14THIN", "10SCREEN", "12SCREEN", "14SCREEN",
+            const possibleCrust = ["10THIN", "12THIN", "14THIN", "10SCREEN", "12SCREEN", "14SCREEN",
                 "P12IPAZA", "PBKIREZA", "P16IBKZA", "P10IGFZA"];
 
             prompt.get(crustSchema, function (err, res) {
-                // res = { question: value }
                 crust = possibleCrust[Number(res.question)];
-
                 console.log('Crust:', crust + '\n');
                 getSauce();
             });
 
             function getSauce() {
-                var sauceSchema = {
+                const sauceSchema = {
                     description: warn('What sauce would you like? (enter code only) \n' +
                         '\n0 - Original / Robust Inspired Tomato Sauce \n1 - Hearty Marinara ' +
                         '\n2 - Barbeque Sauce \n3 - Garlic Parmesan White Sauce \n4 - Alfredo Sauce\n\n'),
@@ -183,19 +183,17 @@ module.exports = {
                     required: true
                 }
 
-                var possibleSauce = ["X", "Xm", "Bq", "Xw", "Xf"];
+                const possibleSauce = ["X", "Xm", "Bq", "Xw", "Xf"];
 
                 prompt.get(sauceSchema, function (err, res) {
-                    // res = { question: value }
                     sauce = possibleSauce[Number(res.question)];
-
                     console.log('Sauce:', sauce + '\n');
                     getToppings();
                 });
             }
 
             function getToppings() {
-                var toppingsSchema = {
+                const toppingsSchema = {
                     description: warn('What topping(s) would you like? (enter codes only, spaces separating) \n' +
                         '\nB - Beef \nDu - Chicken \nH - Ham \nK - Bacon \n P - Pepperoni \n' +
                         'Pm - Philly cheese steak\n S - Italian Sausage \nSa - Salami\n' +
@@ -211,15 +209,12 @@ module.exports = {
                     required: true
                 }
 
-                var toppings = [];
-                var possibleToppings = ["B", "C", "Du", "H", "K", "P", "Pm", "S", "Sa", "Si", "Ht",
+                let toppings = [];
+                const possibleToppings = ["B", "C", "Du", "H", "K", "P", "Pm", "S", "Sa", "Si", "Ht",
                     "E", "Cs", "Z", "V", "J", "N", "Rr", "Td", "Fe", "Cp", "R", "G", "M", "O"]
 
                 prompt.get(toppingsSchema, function (err, res) {
-                    // res = { question: value }
-                    var opt = res.question.toString();
-                    // console.log(opt, typeof(opt));
-                    var options = opt.split(' ');
+                    const options = res.question.toString().split(' ');
                     options.forEach((o) => {
                         if (possibleToppings.indexOf(o) > -1) {
                             toppings.push(o);
@@ -233,8 +228,7 @@ module.exports = {
         }
 
         function makePizza(code, sauce, toppings) {
-            // var pizza = new pizzapi.Item({});
-            var pizza = {};
+            let pizza = {};
 
             pizza.Code = code;
             pizza.Options = {
@@ -261,7 +255,7 @@ module.exports = {
             promptForOrder();
 
             function promptForOrder() {
-                var schema = {
+                const schema = {
                     description: warn('What option(s) would you like? (enter numbers only, multiple OK) \n' +
                         '\n1: WI Six Cheese pizza \n2: Pacific Veggie Pizza \n3: 8 hot wings \n4: Coke\n' +
                         '5: Make your own pizza\n\n'),
@@ -275,10 +269,7 @@ module.exports = {
                 var creatingPizzaFlag = false;
 
                 prompt.get(schema, function (err, res) {
-                    // res = { question: value }
-                    var opt = res.question.toString();
-                    // console.log(opt, typeof(opt));
-                    var options = opt.split('');
+                    var options = res.question.toString().split('');
                     options.forEach((o) => {
                         switch (o) {
                             case "1":
@@ -301,8 +292,7 @@ module.exports = {
                                 return;
                         }
                     });
-                    // order.addItem(gButter);
-                    // console.log('order before validate:');
+
                     if (!order.Currency) {
                         order.Currency = "USD";
                     }
@@ -332,13 +322,13 @@ module.exports = {
         }
 
         function priceOrder(validatedOrder) {
-            var price = undefined;
-            var pricedOrder;
+            let price = undefined;
+            let pricedOrder;
             validatedOrder.price(function (result) {
                 if (result.success) {
                     pricedOrder = result;
                     price = result.result.Order.Amounts.Customer;
-                    var schema = {
+                    const schema = {
                         description: warn('The price of this order will be ' + price +
                             '. OK to place order? (Enter yes or no)'),
                         type: 'string',
@@ -347,7 +337,7 @@ module.exports = {
                         required: true
                     }
                     prompt.get(schema, function (err, res) {
-                        var opt = res.question;
+                        const opt = res.question;
                         if (opt === "yes") {
                             if (api === "pizzapi") {
                                 console.log(error("Development api does not support placing order. Please switch to dominos api to place a real order. Ending program."));
@@ -365,8 +355,8 @@ module.exports = {
         }
 
         function placeOrder(order) {
-            var cardInfo = new order.PaymentObject();
-            var cardNumber = myCard.cardNumber;
+            let cardInfo = new order.PaymentObject();
+            const cardNumber = myCard.cardNumber;
 
             cardInfo.Expiration = myCard.expiration;//  01/15 just the numbers "01/15".replace(/\D/g,'');
             cardInfo.SecurityCode = myCard.securityCode;
@@ -375,8 +365,6 @@ module.exports = {
             cardInfo.Number = cardNumber;
             cardInfo.CardType = order.validateCC(cardNumber);
 
-            console.log(cardInfo);
-            //order.Payments.push(cardInfo);
             console.log(funky('Placing order...'));
             order.place(
                 function (result) {
@@ -395,7 +383,7 @@ module.exports = {
                 }
             );
         }
-        
+
         getStoreInfo();
     }
 }
