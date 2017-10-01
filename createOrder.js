@@ -145,7 +145,7 @@ module.exports = {
             );
         }
 
-        function pizzaFactory() {
+        function pizzaFactory(callback) {
             let crust = null;
             let sauce = null;
 
@@ -222,12 +222,12 @@ module.exports = {
                     });
 
                     console.log('Topping codes:', toppings + '\n');
-                    makePizza(crust, sauce, toppings);
+                    makePizza(crust, sauce, toppings, callback);
                 });
             }
         }
 
-        function makePizza(code, sauce, toppings) {
+        function makePizza(code, sauce, toppings, callback) {
             let pizza = {};
 
             pizza.Code = code;
@@ -246,22 +246,34 @@ module.exports = {
             console.log(pizza.Options);
             // order.addItem(pizza);
             order.Products.push(pizza);
-            validateOrder(order);
+            callback();
         }
 
         function startOrder() {
             order.Coupons = selectedCouponCodes;
 
+            if (!order.Currency) {
+                order.Currency = "USD";
+            }
+
+            if (!order.StoreID) {
+                order.StoreID = myStore.ID;
+            }
+
             promptForOrder();
 
             function promptForOrder() {
+                console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n' + 
+                    'Current order is:', order.Products.filter((i) => { return i; }).map((p) => {
+                        return p.Code;
+                    }), '\n');
                 const schema = {
-                    description: warn('What option(s) would you like? (enter numbers only, multiple OK) \n' +
+                    description: warn('What option would you like? (enter number only) \n' +
                         '\n1: WI Six Cheese pizza \n2: Pacific Veggie Pizza \n3: 8 hot wings \n4: Coke\n' +
-                        '5: Make your own pizza\n\n'),
+                        '5: Make your own pizza \n6: Price Order / Check Out \n'),
                     type: 'number',
                     pattern: /[1-9]{1-9}/,
-                    message: colors.error('You must choose options to order.'),
+                    message: colors.error('You must choose an option to order.'),
                     hidden: false,
                     required: true
                 }
@@ -269,42 +281,34 @@ module.exports = {
                 var creatingPizzaFlag = false;
 
                 prompt.get(schema, function (err, res) {
-                    var options = res.question.toString().split('');
-                    options.forEach((o) => {
-                        switch (o) {
+                    var option = res.question.toString().split('')[0];
+                        switch (option) {
                             case "1":
                                 order.addItem(chz);
+                                promptForOrder();
                                 break;
                             case "2":
                                 order.addItem(veg);
+                                promptForOrder();
                                 break;
                             case "3":
                                 order.addItem(hotWings);
+                                promptForOrder();
                                 break;
                             case "4":
                                 order.addItem(coke);
+                                promptForOrder();
                                 break;
                             case "5":
-                                creatingPizzaFlag = true;
-                                order.addItem(pizzaFactory());
+                                order.addItem(pizzaFactory(promptForOrder));
                                 break;
+                            case "6":
+                                validateOrder(order);
+                                return;
                             default:
+                                promptForOrder();
                                 return;
                         }
-                    });
-
-                    if (!order.Currency) {
-                        order.Currency = "USD";
-                    }
-
-                    if (!order.StoreID) {
-                        order.StoreID = myStore.ID;
-                    }
-
-                    // console.log(order);
-                    if (!creatingPizzaFlag) {
-                        validateOrder(order);
-                    }
                 });
             }
         }
