@@ -40,11 +40,11 @@ module.exports = function (resolve) {
     }
 
     function writeFile() {
-        fs.writeFile("./data/myCard.js", ("module.exports = " + JSON.stringify(card)), function (err) {
+        fs.writeFile("./customer/myCard.js", ("module.exports = " + JSON.stringify(card)), function (err) {
             if (err) {
                 return console.log(err);
             }
-            console.log("Details file saved to './myCard.js'!\n\n");
+            console.log("Details file saved to './customer/myCard.js'!\n\n");
         });
     }
 

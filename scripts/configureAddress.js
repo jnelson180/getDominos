@@ -40,11 +40,11 @@ module.exports = function (resolve) {
     }
 
     function writeFile() {
-        fs.writeFile("./data/myAddress.js", ("module.exports = " + JSON.stringify(address)), function (err) {
+        fs.writeFile("./customer/myAddress.js", ("module.exports = " + JSON.stringify(address)), function (err) {
             if (err) {
                 return console.log(err);
             }
-            console.log("Address file saved to './myAddress.js'! \n\n");
+            console.log("Address file saved to './customer/myAddress.js'! \n\n");
             resolve(address);
         });
     }

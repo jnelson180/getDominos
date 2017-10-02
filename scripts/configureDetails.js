@@ -41,11 +41,11 @@ module.exports = function (address, resolve) {
     }
 
     function writeFile() {
-        fs.writeFile("./data/myDetails.js", ("module.exports = " + JSON.stringify(details)), function (err) {
+        fs.writeFile("./customer/myDetails.js", ("module.exports = " + JSON.stringify(details)), function (err) {
             if (err) {
                 return console.log(err);
             }
-            console.log("Details file saved to './myDetails.js'!\n\n");
+            console.log("Details file saved to './customer/myDetails.js'!\n\n");
             resolve();
         });
     }
