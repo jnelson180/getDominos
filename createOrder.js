@@ -1,8 +1,10 @@
 const api = "pizzapi"; // set api version either 'dominos' (real) or 'pizzapi (dev)
-const myAddress = require('./data/myAddress');
-const myDetails = require('./data/myDetails');
+const myAddress = require('./customer/myAddress');
+const myDetails = require('./customer/myDetails');
+const myCard = require('./customer/myCard');
+const items = require('./data/items');
+const strip = require('stripmargin').stripMargin;
 const colors = require('./colors');
-const myCard = require('./data/myCard');
 const prompt = require('prompt');
 const pizzapi = require(api);
 
@@ -26,44 +28,6 @@ console.log(api === "pizzapi" ? "Running development api (no transactions)... \n
     colors.error("Running production api (transactions enabled) \n"));
 
 console.log(funky('Hi ' + myDetails.firstName + "! Welcome to the unofficial Dominos terminal script!"));
-
-
-// preconfigured orders/items
-const veg = new pizzapi.Item({
-    code: 'P14ITHPV',
-    options: [],
-    quantity: 1
-});
-
-const chz = new pizzapi.Item({
-    code: 'P14ITHCR',
-    options: [],
-    quantity: 1
-});
-
-const gButter = new pizzapi.Item({
-    code: 'GARBUTTER',
-    options: [],
-    quantity: 1
-});
-
-const ranch = new pizzapi.Item({
-    code: 'RANCH',
-    options: [],
-    quantity: 1
-});
-
-const hotWings = new pizzapi.Item({
-    code: 'W08PHOTW',
-    options: [],
-    quantity: 1
-});
-
-const coke = new pizzapi.Item({
-    code: '20BCOKE',
-    options: [],
-    quantity: 1
-});
 
 prompt.start();
 
@@ -270,11 +234,19 @@ module.exports = {
                         return p.Code;
                     }), '\n');
                 const schema = {
-                    description: warn('What option would you like? (enter number only) \n' +
-                        '\n1: WI Six Cheese pizza \n2: Pacific Veggie Pizza \n3: 8 hot wings \n4: Coke\n' +
-                        '5: Make your own pizza \n6: Price Order / Check Out \n'),
+                    description: warn(strip(`What option would you like? (enter number only)
+
+                        1: WI Six Cheese pizza
+                        2: Pacific Veggie Pizza
+                        3: 8 hot wings
+                        4: Coke
+                        5: 8 Piece Cinnamon Bread Twists
+                        90: Make your own pizza
+                        99: Price Order / Check Out 
+                        
+                        `)),
                     type: 'number',
-                    pattern: /[1-9]{1-9}/,
+                    pattern: /[0-9]+/,
                     message: colors.error('You must choose an option to order.'),
                     hidden: false,
                     required: true
@@ -283,28 +255,32 @@ module.exports = {
                 var creatingPizzaFlag = false;
 
                 prompt.get(schema, function (err, res) {
-                    var option = res.question.toString().split('')[0];
+                    var option = res.question.toString().split(' ')[0];
                         switch (option) {
                             case "1":
-                                order.addItem(chz);
+                                order.addItem(items.chz);
                                 promptForOrder();
                                 break;
                             case "2":
-                                order.addItem(veg);
+                                order.addItem(items.veg);
                                 promptForOrder();
                                 break;
                             case "3":
-                                order.addItem(hotWings);
+                                order.addItem(items.hotWings);
                                 promptForOrder();
                                 break;
                             case "4":
-                                order.addItem(coke);
+                                order.addItem(items.coke);
                                 promptForOrder();
                                 break;
                             case "5":
+                                order.addItem(items.cinnaBread);
+                                promptForOrder();
+                                break;
+                            case "90":
                                 order.addItem(pizzaFactory(promptForOrder));
                                 break;
-                            case "6":
+                            case "99":
                                 validateOrder(order);
                                 return;
                             default:
