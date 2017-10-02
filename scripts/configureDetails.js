@@ -13,35 +13,35 @@ module.exports = function (address, resolve) {
     }
 
     function getFirstName() {
-        prompt.get(['What is your first name?'], function (err, result) {
+        prompt.get(['What is your first name?\n'], function (err, result) {
             details.firstName = String(Object.values(result)[0]);
             getLastName();
         });
     }
 
     function getLastName() {
-        prompt.get(['What is your last name?'], function (err, result) {
+        prompt.get(['What is your last name?\n'], function (err, result) {
             details.lastName = String(Object.values(result)[0]);
             getPhone();
         });
     }
 
     function getPhone() {
-        prompt.get(['What is your phone number?'], function (err, result) {
+        prompt.get(['What is your phone number?\n'], function (err, result) {
             details.phone = String(Object.values(result)[0]).toUpperCase();
             getEmail();
         });
     }
 
     function getEmail() {
-        prompt.get(['What is your email address?'], function (err, result) {
+        prompt.get(['What is your email address?\n'], function (err, result) {
             details.email = Number(Object.values(result)[0]);
             writeFile();
         });
     }
 
     function writeFile() {
-        fs.writeFile("./myDetails.js", ("module.exports = " + JSON.stringify(details)), function (err) {
+        fs.writeFile("./data/myDetails.js", ("module.exports = " + JSON.stringify(details)), function (err) {
             if (err) {
                 return console.log(err);
             }

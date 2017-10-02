@@ -1,8 +1,8 @@
 const api = "pizzapi"; // set api version either 'dominos' (real) or 'pizzapi (dev)
-const myAddress = require('./myAddress');
-const myDetails = require('./myDetails');
+const myAddress = require('./data/myAddress');
+const myDetails = require('./data/myDetails');
 const colors = require('./colors');
-const myCard = require('./myCard');
+const myCard = require('./data/myCard');
 const prompt = require('prompt');
 const pizzapi = require(api);
 
@@ -148,9 +148,9 @@ module.exports = {
         function pizzaFactory(callback) {
             let crust = null;
             let sauce = null;
-
+            console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
             const crustSchema = {
-                description: warn('What topping(s) would you like? (enter codes only, spaces separating) \n' +
+                description: warn('What crust would you like? (enter codes only, spaces separating) \n' +
                     '\n0 - 10" Thin Crust \n1 - 12" Thin Crust \n2 - 14" Thin Crust' +
                     '\n3 - 10" Hand Tossed \n4 - 12" Hand Tossed \n5 - 14" Hand Tossed' +
                     '\n6 - 12" Pan Pizza \n7 - 14" Brooklyn Style Pizza' +
@@ -172,6 +172,7 @@ module.exports = {
             });
 
             function getSauce() {
+                console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
                 const sauceSchema = {
                     description: warn('What sauce would you like? (enter code only) \n' +
                         '\n0 - Original / Robust Inspired Tomato Sauce \n1 - Hearty Marinara ' +
@@ -193,6 +194,7 @@ module.exports = {
             }
 
             function getToppings() {
+                console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
                 const toppingsSchema = {
                     description: warn('What topping(s) would you like? (enter codes only, spaces separating) \n' +
                         '\nB - Beef \nDu - Chicken \nH - Ham \nK - Bacon \n P - Pepperoni \n' +

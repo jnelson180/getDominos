@@ -1,5 +1,6 @@
 node_modules/
 track.js
+data/*
 myCard.js
 myAddress.js
 myDetails.js
