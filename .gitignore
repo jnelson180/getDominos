@@ -1,6 +1,6 @@
 node_modules/
 track.js
 customer/*
-myCard.js
-myAddress.js
-myDetails.js
+*/myCard.js
+*/myAddress.js
+*/myDetails.js
