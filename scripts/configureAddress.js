@@ -1,6 +1,12 @@
 // configure address info
 var fs = require('fs');
+var dir = './customer';
 var prompt = require('prompt');
+
+if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+}
+
 prompt.start();
 
 module.exports = function (resolve) {
