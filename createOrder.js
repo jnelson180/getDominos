@@ -48,7 +48,7 @@ module.exports = {
                         carryoutOpen: myStoreData.ServiceIsOpen.Carryout && myStoreData.AllowCarryoutOrders && myStoreData.IsOnlineCapable,
                         deliveryOpen: myStoreData.ServiceIsOpen.Delivery && myStoreData.AllowDeliveryOrders && myStoreData.IsOnlineCapable
                     }
-                    console.log(info("\nSelected store is: \n"), myStoreInfo, info("\n"));
+                    console.log(info("\nSelected store is: \n"), myStoreInfo, info("\n\n"));
                     myStore = new pizzapi.Store({ ID: myStoreNumber });
                     if (!myStoreData.IsOpen || !myStoreData.IsOnlineNow) {
                         console.log(error("Looks like you can't place an order right now. Lucky you!\n\n"));
@@ -71,9 +71,9 @@ module.exports = {
                                         if (coupons[item].Name.indexOf('Carryout') === -1) {
                                             availableCouponCodes.push(coupons[item].Code);
                                             console.log(info(
-                                                coupons[item].Code, ":",
-                                                coupons[item].Price,
-                                                coupons[item].Name, "\n"
+                                                coupons[item].Code + ": " +
+                                                coupons[item].Price + "- " +
+                                                coupons[item].Name + "\n"
                                             ));
                                         }
                                     }
@@ -244,10 +244,10 @@ module.exports = {
                         90: Make your own pizza
                         99: Price Order / Check Out 
                         
-                        `)),
+                        \n\n`)),
                     type: 'number',
                     pattern: /[0-9]+/,
-                    message: colors.error('You must choose an option to order.'),
+                    message: colors.error('You must choose an option to order.\n\n'),
                     hidden: false,
                     required: true
                 }
@@ -294,11 +294,11 @@ module.exports = {
         function validateOrder(order) {
             order.validate(function (result) {
                 if (result.success) {
-                    console.log(success('Order validated.'));
-                    console.log(order);
+                    // console.log(order);
+                    console.log(success('Order validated successfully. \n'));
                     priceOrder(order);
                 } else {
-                    console.log(error("There was a problem with your order! Aborting!"));
+                    console.log(error("There was a problem with your order! Aborting! \n"));
                 }
             });
         }
@@ -312,7 +312,7 @@ module.exports = {
                     price = result.result.Order.Amounts.Customer;
                     const schema = {
                         description: warn('The price of this order will be ' + price +
-                            '. OK to place order? (Enter yes or no)'),
+                            '. OK to place order? (Enter yes or no) \n'),
                         type: 'string',
                         pattern: /^(y|yes|n|no)$/,
                         message: error('Must enter yes or no!'),
@@ -322,16 +322,16 @@ module.exports = {
                         const opt = res.question;
                         if (opt === "yes") {
                             if (api === "pizzapi") {
-                                console.log(error("Development api does not support placing order. Please switch to dominos api to place a real order. Ending program."));
+                                console.log(error("Development api does not support placing order. Please switch to dominos api to place a real order. Ending program. \n\n"));
                                 return;
                             }
                             placeOrder(validatedOrder);
                         } else {
-                            console.log(error("Aborting."));
+                            console.log(error("Aborting. \n"));
                         }
                     });
                 } else {
-                    console.log(error("There was a problem pricing your order! Aborting!"));
+                    console.log(error("There was a problem pricing your order! Aborting! \n"));
                 }
             });
         }
@@ -347,10 +347,10 @@ module.exports = {
             cardInfo.Number = cardNumber;
             cardInfo.CardType = order.validateCC(cardNumber);
 
-            console.log(funky('Placing order...'));
+            console.log(funky('Placing order...\n\n'));
             order.place(
                 function (result) {
-                    console.log(funky('Now slow your roll and wait for the pizza!'));
+                    console.log(funky('Now slow your roll and wait for the pizza! \n\n'));
                     trackPizza(result.result.Order.OrderID);
                 }
             );
