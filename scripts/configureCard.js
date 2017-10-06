@@ -13,28 +13,28 @@ module.exports = function (resolve) {
 
     function getCardNumber() {
         prompt.get(['What is your card number (Visa, Mastercard, American Express, Discover)?\n'], function (err, result) {
-            card.cardNumber = String(Object.values(result)[0]);
+            card.cardNumber = String(Object.values(result));
             getExpiration();
         });
     }
 
     function getExpiration() {
         prompt.get(['What is your card expiration date (MMYY, no slashes)?\n'], function (err, result) {
-            card.expiration = String(Object.values(result)[0]);
+            card.expiration = String(Object.values(result));
             getSecurityCode();
         });
     }
 
     function getSecurityCode() {
         prompt.get(['What is the security code (3-4 digits on the back of the card)?\n'], function (err, result) {
-            card.securityCode = String(Object.values(result)[0]).toUpperCase();
+            card.securityCode = String(Object.values(result)).toUpperCase();
             getPostalCode();
         });
     }
 
     function getPostalCode() {
         prompt.get(['What is your billing postal code?\n'], function (err, result) {
-            card.postalCode = Number(Object.values(result)[0]);
+            card.postalCode = Number(Object.values(result));
             writeFile();
         });
     }
@@ -44,7 +44,7 @@ module.exports = function (resolve) {
             if (err) {
                 return console.log(err);
             }
-            console.log("Details file saved to './customer/myCard.js'!\n\n");
+            console.log("\nCard details file saved to './customer/myCard.js'!\n\n");
         });
     }
 

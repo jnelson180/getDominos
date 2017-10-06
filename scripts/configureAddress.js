@@ -18,29 +18,30 @@ module.exports = function (resolve) {
     }
 
     function getStreet() {
+        console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         prompt.get(['What is your street address (house / apartment number and street)?\n'], function (err, result) {
-            address.Street = String(Object.values(result)[0]);
+            address.Street = String(Object.values(result));
             getCity();
         });
     }
 
     function getCity() {
         prompt.get(['What is your city name?\n'], function (err, result) {
-            address.City = String(Object.values(result)[0]);
+            address.City = String(Object.values(result));
             getRegion();
         });
     }
 
     function getRegion() {
         prompt.get(['What is your state (two letter abbreviation)?\n'], function (err, result) {
-            address.Region = String(Object.values(result)[0]).toUpperCase();
+            address.Region = String(Object.values(result)).toUpperCase();
             getPostal();
         });
     }
 
     function getPostal() {
         prompt.get(['What is your zip code?\n'], function (err, result) {
-            address.PostalCode = String(Object.values(result)[0]);
+            address.PostalCode = String(Object.values(result));
             writeFile();
         });
     }
@@ -50,7 +51,7 @@ module.exports = function (resolve) {
             if (err) {
                 return console.log(err);
             }
-            console.log("Address file saved to './customer/myAddress.js'! \n\n");
+            console.log("\nAddress file saved to './customer/myAddress.js'! \n\n");
             resolve(address);
         });
     }
