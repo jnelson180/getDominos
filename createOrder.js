@@ -309,10 +309,12 @@ module.exports = {
             validatedOrder.price(function (result) {
                 if (result.success) {
                     pricedOrder = result;
+                    // console.log(result);
                     price = result.result.Order.Amounts.Customer;
+                    waitTime = result.result.Order.EstimatedWaitMinutes;
                     const schema = {
                         description: warn('The price of this order will be ' + price +
-                            '. OK to place order? (Enter yes or no) \n'),
+                            ' and the estimated wait is ' + waitTime + ' minutes. OK to place order? (Enter yes or no) \n'),
                         type: 'string',
                         pattern: /^(y|yes|n|no)$/,
                         message: error('Must enter yes or no!'),
