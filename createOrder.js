@@ -241,6 +241,9 @@ module.exports = {
                         3: 8 hot wings
                         4: Coke
                         5: 8 Piece Cinnamon Bread Twists
+                        6. 2 Piece Chocolate Crunch Lava Cakes
+                        7. Marbled Cookie Brownie
+                        8. Chocolate Dipped Chocolate Chip Cookie
                         90: Make your own pizza
                         99: Price Order / Check Out 
                         
@@ -277,6 +280,18 @@ module.exports = {
                                 order.addItem(items.cinnaBread);
                                 promptForOrder();
                                 break;
+                            case "6":
+                                order.addItem(items.crunchCakes);
+                                promptForOrder();
+                                break;
+                            case "7":
+                                order.addItem(items.marbleBrownie);
+                                promptForOrder();
+                                break;
+                            case "8":
+                                order.addItem(items.chocDippedCookie);
+                                promptForOrder();
+                                break;                                                                
                             case "90":
                                 order.addItem(pizzaFactory(promptForOrder));
                                 break;

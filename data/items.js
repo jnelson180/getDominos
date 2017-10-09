@@ -43,5 +43,20 @@ module.exports = {
         code: 'B8PCCT',
         options: [],
         quantity: 1
+    }),
+    crunchCakes: new pizzapi.Item({
+        code: 'B2PCLAVA',
+        options: [],
+        quantity: 1
+    }),
+    marbleBrownie: new pizzapi.Item({
+        code: 'MARBRWNE',
+        options: [],
+        quantity: 1
+    }),
+    chocDippedCookie: new pizzapi.Item({
+        code: 'REACCK',
+        options: [],
+        quantity: 1
     })
 }
